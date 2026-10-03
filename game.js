@@ -6,6 +6,7 @@
     round: null,
     lastDiscard: null,
     claimWindow: null,
+    demo: null,
   };
 
   const $ = (id) => document.getElementById(id);
@@ -57,6 +58,7 @@
     });
     state.lastDiscard = null;
     state.claimWindow = null;
+    state.demo = null;
     for (let draw = 0; draw < 13; draw += 1) {
       for (let player = 0; player < 4; player += 1) drawIntoHand(player);
     }
@@ -67,6 +69,29 @@
   function startPlayRound() {
     createRound();
     addLog("Play Round is ready. Discard a tile from your hand.");
+    render();
+  }
+
+  function startGuidedDemo() {
+    createRound();
+    state.round.players[0].hand = ["1B", "1C", "1D", "2B", "2C", "2D", "3B", "3C", "3D", "4B", "4C", "4D", "5B", "5C"];
+    state.round.players[1].hand = ["1B", "2B", "4C", "5C", "6C", "7D", "8D", "9D", "E", "E", "S", "S", "N"];
+    state.round.players[2].hand = ["3B", "3B", "1C", "2C", "3C", "4D", "5D", "6D", "E", "S", "W", "N", "RD"];
+    state.round.players[3].hand = ["1B", "2B", "3B", "4B", "5B", "6B", "7C", "8C", "9C", "2D", "2D", "2D", "E"];
+    state.demo = {
+      discard: "3B",
+      currentPriority: "win",
+      passed: [],
+      candidates: [
+        { player: 3, type: "win", tiles: ["1B", "2B", "3B"] },
+        { player: 2, type: "pung", tiles: ["3B", "3B"] },
+        { player: 1, type: "chow", tiles: ["1B", "2B"] },
+      ],
+    };
+    state.lastDiscard = { tile: "3B", player: 0 };
+    state.round.players[0].discards = ["3B"];
+    openDemoClaimWindow();
+    addLog("Guided Priority Demo starts: Win Claim is checked before Pung, and Chow waits behind both.");
     render();
   }
 
@@ -90,6 +115,17 @@
     }
   }
 
+  function openDemoClaimWindow() {
+    state.claimWindow = core.resolveClaimWindow({
+      discard: state.demo.discard,
+      discarder: 0,
+      currentPriority: state.demo.currentPriority,
+      passed: state.demo.passed,
+      candidates: state.demo.candidates,
+    });
+    for (const entry of state.claimWindow.auditTrail) addLog(entry, "claim");
+  }
+
   function discardHumanTile(tileIndex) {
     if (!state.round || state.round.phase !== "playing") return;
     const [tile] = state.round.players[0].hand.splice(tileIndex, 1);
@@ -109,7 +145,24 @@
 
   function passClaim() {
     if (!state.claimWindow) return;
-    addLog("You pass. Claim Window remains visible as an audit record.", "claim");
+    if (state.demo) {
+      const activeAction = state.claimWindow.availableActions[0];
+      if (activeAction) {
+        state.demo.passed.push({ player: activeAction.player, type: activeAction.type });
+        addLog(`${seats[activeAction.player]} passes ${activeAction.type}.`, "claim");
+      }
+      if (state.demo.currentPriority === "win") {
+        state.demo.currentPriority = "pung";
+        openDemoClaimWindow();
+      } else if (state.demo.currentPriority === "pung") {
+        state.demo.currentPriority = "chow";
+        openDemoClaimWindow();
+      } else {
+        addLog("Next may now take the Chow. Claim Priority is fully resolved.", "claim");
+      }
+    } else {
+      addLog("You pass. Claim Window remains visible as an audit record.", "claim");
+    }
     render();
   }
 
@@ -217,7 +270,7 @@
   }
 
   $("play-round-button").addEventListener("click", startPlayRound);
-  $("guided-demo-button").addEventListener("click", startPlayRound);
+  $("guided-demo-button").addEventListener("click", startGuidedDemo);
   $("draw-button").addEventListener("click", drawForHuman);
   $("pass-button").addEventListener("click", passClaim);
   render();

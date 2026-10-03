@@ -94,3 +94,25 @@ test("Claim Window exposes Pung after Win claims pass", () => {
   ]);
   assert.ok(claims.auditTrail.includes("West passed Win Claim."));
 });
+
+test("Claim Window exposes Next-Player Chow after Win and Pung claims pass", () => {
+  const claims = resolveClaimWindow({
+    discard: "3B",
+    discarder: 0,
+    currentPriority: "chow",
+    passed: [
+      { player: 3, type: "win" },
+      { player: 2, type: "pung" },
+    ],
+    candidates: [
+      { player: 1, type: "chow", tiles: ["1B", "2B"] },
+      { player: 2, type: "pung", tiles: ["3B", "3B"] },
+      { player: 3, type: "win", tiles: ["1B", "2B", "3B"] },
+    ],
+  });
+
+  assert.deepEqual(claims.availableActions, [{ player: 1, type: "chow", label: "Next may chow 3B" }]);
+  assert.deepEqual(claims.blockedActions, []);
+  assert.ok(claims.auditTrail.includes("West passed Win Claim."));
+  assert.ok(claims.auditTrail.includes("Across passed pung."));
+});
