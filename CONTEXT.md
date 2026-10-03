@@ -6,6 +6,10 @@
 
 The canonical rules profile for this game. It represents Filipino Mahjongg rather than Chinese, Japanese, or generic Mahjong rules. Local table variants are excluded until explicitly chosen and documented.
 
+### Local Table Variant
+
+A rule or scoring behavior that may be used by some Filipino Mahjongg groups but is not part of the current Filipino Mahjongg Ruleset. Local table variants must be named as not yet modeled instead of silently folded into the rules.
+
 ### Teaching-First Playable Rules Game
 
 The target first experience: a real playable Mahjongg game that prioritizes learning, correctness, and visible rule explanations over decoration or speed.
@@ -22,6 +26,10 @@ A player's request to take another player's discard for a legal result such as C
 
 The ordering that decides which claim is allowed when multiple players could use the same discard. Lower-priority options must not be offered as available actions until higher-priority claims have passed or expired.
 
+### Claim Window
+
+The explicit period after a discard when eligible players may claim or pass according to Claim Priority. The game resolves higher-priority claims before exposing lower-priority actions.
+
 ### Chow
 
 A claim that uses the latest discard to complete a suited sequence, when allowed by the Filipino Mahjongg Ruleset.
@@ -34,6 +42,10 @@ A claim that uses the latest discard to complete a triplet, when allowed by the 
 
 Flower tiles in the Filipino Mahjongg Ruleset. Their exact handling is part of the selected rules profile and must remain explicit in the rules model.
 
+### Automatic Flores Replacement
+
+The MVP handling for Flores: the game reveals the Flower tile, logs the event, and draws a replacement tile without requiring a separate manual player action.
+
 ### Simple Legal AI
 
 An opponent model that only takes legal actions and makes straightforward draw, discard, claim, and pass choices. It is not expected to play strategically well in the first version.
@@ -45,3 +57,15 @@ A curated early-game sequence used to expose important Filipino Mahjongg concept
 ### Full Round
 
 A playable unit that includes dealing, drawing, discarding, legal claims, win detection, and a round end. Scoring may be simplified at first, but the game must log how the result was reached.
+
+### Simple Scoring
+
+The MVP result model that distinguishes a legal win from a non-win and explains the winning hand without attempting complete Filipino Mahjongg payout math.
+
+### Four-Seat Table
+
+The default table shape for the MVP: one human player and three Simple Legal AI opponents.
+
+### Static Browser Game
+
+The first implementation target for this empty repository: a dependency-free browser game using ordinary static files before introducing a framework.
