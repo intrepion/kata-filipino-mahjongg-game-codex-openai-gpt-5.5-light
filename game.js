@@ -1,1 +1,224 @@
-console.info("Filipino Mahjongg static UI arrives in MVP 2.");
+(function startGame(core) {
+  "use strict";
+
+  const seats = ["You", "Next", "Across", "West"];
+  const state = {
+    round: null,
+    lastDiscard: null,
+    claimWindow: null,
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  function makeWall() {
+    const tiles = [];
+    for (const suit of ["B", "C", "D"]) {
+      for (let rank = 1; rank <= 9; rank += 1) {
+        for (let copy = 0; copy < 4; copy += 1) tiles.push(`${rank}${suit}`);
+      }
+    }
+    for (const honor of ["E", "S", "W", "N", "RD", "GD", "WD"]) {
+      for (let copy = 0; copy < 4; copy += 1) tiles.push(honor);
+    }
+    for (let flower = 1; flower <= 8; flower += 1) tiles.push(`F${flower}`);
+    return tiles.sort((a, b) => a.localeCompare(b));
+  }
+
+  function newPlayer() {
+    return { hand: [], flowers: [], melds: [], discards: [] };
+  }
+
+  function addLog(message, type = "info") {
+    state.round.log.unshift({ message, type });
+  }
+
+  function drawIntoHand(playerIndex) {
+    if (!state.round.wall.length) {
+      state.round.phase = "draw";
+      addLog("The wall is empty. The round ends in an exhaustive draw.", "draw");
+      return null;
+    }
+    const next = state.round.wall[0];
+    if (core.isFlower(next)) {
+      const result = core.revealFlores(state.round, playerIndex);
+      return result.replacement;
+    }
+    const tile = state.round.wall.shift();
+    state.round.players[playerIndex].hand.push(tile);
+    return tile;
+  }
+
+  function createRound() {
+    state.round = core.createDemoRound({
+      players: [newPlayer(), newPlayer(), newPlayer(), newPlayer()],
+      wall: makeWall(),
+      log: [],
+      phase: "playing",
+    });
+    state.lastDiscard = null;
+    state.claimWindow = null;
+    for (let draw = 0; draw < 13; draw += 1) {
+      for (let player = 0; player < 4; player += 1) drawIntoHand(player);
+    }
+    drawIntoHand(0);
+    addLog("Fresh Round starts with one human player and three Simple Legal AI opponents.");
+  }
+
+  function startPlayRound() {
+    createRound();
+    addLog("Play Round is ready. Discard a tile from your hand.");
+    render();
+  }
+
+  function openClaimWindow(tile) {
+    const candidates = [];
+    if (tile === "3B") {
+      candidates.push({ player: 1, type: "chow", tiles: ["1B", "2B"] });
+      candidates.push({ player: 2, type: "pung", tiles: ["3B", "3B"] });
+    }
+    state.claimWindow = core.resolveClaimWindow({
+      discard: tile,
+      discarder: 0,
+      currentPriority: "pung",
+      passed: [],
+      candidates,
+    });
+    if (!state.claimWindow.availableActions.length && !state.claimWindow.blockedActions.length) {
+      addLog(`No one claims ${tile}. Next player continues.`);
+    } else {
+      for (const entry of state.claimWindow.auditTrail) addLog(entry, "claim");
+    }
+  }
+
+  function discardHumanTile(tileIndex) {
+    if (!state.round || state.round.phase !== "playing") return;
+    const [tile] = state.round.players[0].hand.splice(tileIndex, 1);
+    state.round.players[0].discards.push(tile);
+    state.lastDiscard = { tile, player: 0 };
+    addLog(`You discard ${tile}.`);
+    openClaimWindow(tile);
+    render();
+  }
+
+  function drawForHuman() {
+    if (!state.round || state.round.phase !== "playing") return;
+    const tile = drawIntoHand(0);
+    if (tile) addLog(`You draw ${tile}.`);
+    render();
+  }
+
+  function passClaim() {
+    if (!state.claimWindow) return;
+    addLog("You pass. Claim Window remains visible as an audit record.", "claim");
+    render();
+  }
+
+  function tileElement(tile, className = "tile") {
+    const span = document.createElement("span");
+    span.className = className;
+    span.textContent = tile;
+    return span;
+  }
+
+  function renderSeat(index) {
+    const player = state.round.players[index];
+    const el = $(`seat-${index}`);
+    el.innerHTML = "";
+    const title = document.createElement("h3");
+    title.textContent = seats[index];
+    el.append(title);
+
+    const meta = document.createElement("div");
+    meta.className = "seat-meta";
+    meta.textContent = `${player.hand.length} concealed | ${player.flowers.length} Flores | ${player.discards.length} discards`;
+    el.append(meta);
+
+    const row = document.createElement("div");
+    row.className = "tile-row";
+    if (index === 0) {
+      player.hand.forEach((tile) => row.append(tileElement(tile)));
+    } else {
+      player.hand.slice(0, 10).forEach(() => row.append(tileElement("?", "tile-back")));
+    }
+    el.append(row);
+
+    const discards = document.createElement("div");
+    discards.className = "tile-row";
+    player.discards.forEach((tile) => discards.append(tileElement(tile)));
+    el.append(discards);
+  }
+
+  function renderHand() {
+    const hand = $("human-hand");
+    hand.innerHTML = "";
+    if (!state.round) return;
+    state.round.players[0].hand.forEach((tile, index) => {
+      const button = document.createElement("button");
+      button.className = "tile-button";
+      button.type = "button";
+      button.textContent = tile;
+      button.title = `Discard ${tile}`;
+      button.addEventListener("click", () => discardHumanTile(index));
+      hand.append(button);
+    });
+  }
+
+  function renderClaims() {
+    $("claim-title").textContent = state.claimWindow ? "Claim Window active" : "No active claim window";
+    const actions = $("claim-actions");
+    const blocked = $("blocked-actions");
+    actions.innerHTML = "";
+    blocked.innerHTML = "";
+    if (!state.claimWindow) return;
+
+    for (const action of state.claimWindow.availableActions) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = action.label;
+      button.addEventListener("click", () => {
+        addLog(`${action.label}. The claim resolves.`, "claim");
+        state.claimWindow = null;
+        render();
+      });
+      actions.append(button);
+    }
+
+    for (const action of state.claimWindow.blockedActions) {
+      const note = document.createElement("div");
+      note.className = "blocked-note";
+      note.textContent = `${seats[action.player]} ${action.type} disabled: ${action.reason}`;
+      blocked.append(note);
+    }
+  }
+
+  function renderLog() {
+    const log = $("activity-log");
+    log.innerHTML = "";
+    if (!state.round) return;
+    state.round.log.slice(0, 24).forEach((entry) => {
+      const item = document.createElement("li");
+      item.textContent = entry.message;
+      log.append(item);
+    });
+  }
+
+  function render() {
+    $("phase-label").textContent = state.round ? state.round.phase : "Ready";
+    $("wall-count").textContent = state.round ? String(state.round.wall.length) : "0";
+    $("last-discard").textContent = state.lastDiscard ? state.lastDiscard.tile : "None";
+    $("draw-button").disabled = !state.round || state.round.phase !== "playing";
+    $("pass-button").disabled = !state.claimWindow;
+    if (state.round) {
+      for (let index = 0; index < 4; index += 1) renderSeat(index);
+    }
+    renderHand();
+    renderClaims();
+    renderLog();
+  }
+
+  $("play-round-button").addEventListener("click", startPlayRound);
+  $("guided-demo-button").addEventListener("click", startPlayRound);
+  $("draw-button").addEventListener("click", drawForHuman);
+  $("pass-button").addEventListener("click", passClaim);
+  render();
+})(window.FilipinoMahjonggCore);

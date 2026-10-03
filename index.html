@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Filipino Mahjongg</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Filipino Mahjongg</p>
+          <h1>Audit Table</h1>
+        </div>
+        <div class="topbar-actions">
+          <button id="play-round-button" type="button">Play Round</button>
+          <button id="guided-demo-button" type="button" class="secondary">Guided Priority Demo</button>
+        </div>
+      </header>
+
+      <section class="status-strip" aria-live="polite">
+        <div>
+          <span class="label">Phase</span>
+          <strong id="phase-label">Ready</strong>
+        </div>
+        <div>
+          <span class="label">Wall</span>
+          <strong id="wall-count">0</strong>
+        </div>
+        <div>
+          <span class="label">Last discard</span>
+          <strong id="last-discard">None</strong>
+        </div>
+      </section>
+
+      <section class="table" aria-label="Mahjongg table">
+        <article class="seat seat-west" id="seat-3"></article>
+        <article class="seat seat-across" id="seat-2"></article>
+        <article class="seat seat-next" id="seat-1"></article>
+        <article class="center-panel">
+          <div>
+            <span class="label">Claim Window</span>
+            <h2 id="claim-title">No active claim window</h2>
+          </div>
+          <div id="claim-actions" class="claim-actions"></div>
+          <div id="blocked-actions" class="blocked-actions"></div>
+        </article>
+        <article class="seat seat-you" id="seat-0"></article>
+      </section>
+
+      <section class="lower-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <span class="label">Your Hand</span>
+            <button id="draw-button" type="button" class="secondary">Draw</button>
+          </div>
+          <div id="human-hand" class="hand"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <span class="label">Activity Log</span>
+            <button id="pass-button" type="button" class="secondary">Pass Claim</button>
+          </div>
+          <ol id="activity-log" class="activity-log"></ol>
+        </article>
+      </section>
+    </main>
+
+    <script src="game-core.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>
