@@ -34,6 +34,10 @@
     state.round.log.unshift({ message, type });
   }
 
+  function sortPlayerHand(playerIndex) {
+    state.round.players[playerIndex].hand = core.sortTiles(state.round.players[playerIndex].hand);
+  }
+
   function drawIntoHand(playerIndex) {
     if (!state.round.wall.length) {
       state.round.phase = "draw";
@@ -43,10 +47,12 @@
     const next = state.round.wall[0];
     if (core.isFlower(next)) {
       const result = core.revealFlores(state.round, playerIndex);
+      sortPlayerHand(playerIndex);
       return result.replacement;
     }
     const tile = state.round.wall.shift();
     state.round.players[playerIndex].hand.push(tile);
+    sortPlayerHand(playerIndex);
     return tile;
   }
 
@@ -80,6 +86,7 @@
     state.round.players[1].hand = ["1B", "2B", "4C", "5C", "6C", "7D", "8D", "9D", "E", "E", "S", "S", "N"];
     state.round.players[2].hand = ["3B", "3B", "1C", "2C", "3C", "4D", "5D", "6D", "E", "S", "W", "N", "RD"];
     state.round.players[3].hand = ["1B", "2B", "4B", "5B", "6B", "7C", "8C", "9C", "2D", "2D", "2D", "E", "E"];
+    for (let player = 0; player < 4; player += 1) sortPlayerHand(player);
     state.demo = {
       discard: "3B",
       currentPriority: "win",

@@ -6,7 +6,21 @@ const {
   evaluateStandardWinningShape,
   resolveClaimWindow,
   revealFlores,
+  sortTiles,
 } = require("../game-core");
+
+test("sortTiles groups suited tiles first so potential straights are easy to scan", () => {
+  assert.deepEqual(sortTiles(["9D", "1C", "E", "3B", "2B", "1B", "2C", "RD"]), [
+    "1B",
+    "2B",
+    "3B",
+    "1C",
+    "2C",
+    "9D",
+    "E",
+    "RD",
+  ]);
+});
 
 test("Standard Winning Shape accepts four melds and one pair", () => {
   const hand = ["1B", "2B", "3B", "4B", "5B", "6B", "7C", "8C", "9C", "2D", "2D", "2D", "E", "E"];

@@ -9,6 +9,7 @@
 
   const SEATS = ["You", "Next", "Across", "West"];
   const SUIT_ORDER = ["B", "C", "D"];
+  const HONOR_ORDER = ["E", "S", "W", "N", "RD", "GD", "WD"];
 
   function tileRank(tile) {
     return Number.parseInt(tile.slice(0, -1), 10);
@@ -18,15 +19,26 @@
     return tile.slice(-1);
   }
 
+  function tileGroup(tile) {
+    if (HONOR_ORDER.includes(tile)) return SUIT_ORDER.length;
+    const suit = tileSuit(tile);
+    const suitIndex = SUIT_ORDER.indexOf(suit);
+    return suitIndex === -1 ? SUIT_ORDER.length : suitIndex;
+  }
+
   function isFlower(tile) {
     return /^F\d+$/.test(tile);
   }
 
   function sortTiles(tiles) {
     return [...tiles].sort((a, b) => {
-      const suitDiff = SUIT_ORDER.indexOf(tileSuit(a)) - SUIT_ORDER.indexOf(tileSuit(b));
-      if (suitDiff !== 0) return suitDiff;
-      return tileRank(a) - tileRank(b) || a.localeCompare(b);
+      const groupDiff = tileGroup(a) - tileGroup(b);
+      if (groupDiff !== 0) return groupDiff;
+      const rankDiff = tileRank(a) - tileRank(b);
+      if (!Number.isNaN(rankDiff) && rankDiff !== 0) return rankDiff;
+      const honorDiff = HONOR_ORDER.indexOf(a) - HONOR_ORDER.indexOf(b);
+      if (HONOR_ORDER.includes(a) && HONOR_ORDER.includes(b) && honorDiff !== 0) return honorDiff;
+      return a.localeCompare(b);
     });
   }
 
