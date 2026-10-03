@@ -26,10 +26,11 @@ http://127.0.0.1:8765/index.html
 
 ```sh
 npm test
+npm run browser:check
 npm run check
 ```
 
-`npm run check` runs JavaScript syntax checks and the Node test suite.
+`npm run check` runs JavaScript syntax checks, the Node rules tests, and the Playwright browser acceptance suite.
 
 ## MVP Acceptance
 

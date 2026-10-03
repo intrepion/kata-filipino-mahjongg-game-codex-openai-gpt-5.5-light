@@ -95,6 +95,7 @@ button:disabled {
 }
 
 .status-strip > div,
+.variant-note,
 .panel,
 .seat,
 .center-panel {
@@ -105,6 +106,17 @@ button:disabled {
 
 .status-strip > div {
   padding: 12px;
+}
+
+.variant-note {
+  margin-bottom: 14px;
+  padding: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.variant-note strong {
+  color: var(--text);
 }
 
 .table {

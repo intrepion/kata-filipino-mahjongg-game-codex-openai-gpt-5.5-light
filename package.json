@@ -1,7 +1,10 @@
 {
   "scripts": {
-    "test": "node --test",
-    "check": "node --check game-core.js && node --check game.js && node --test"
+    "test": "node --test test/*.test.js",
+    "browser:check": "playwright test",
+    "check": "node --check game-core.js && node --check game.js && node --test test/*.test.js && playwright test"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
 }
