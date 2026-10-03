@@ -34,6 +34,10 @@ A Claim that uses the latest discard to complete a legal winning hand. In the MV
 
 The explicit period after a discard when eligible players may claim or pass according to Claim Priority. The game resolves higher-priority claims before exposing lower-priority actions.
 
+### Claim Audit Trail
+
+The visible record of a Claim Window: who had priority, who passed, which actions were blocked, why they were blocked, and how the final claim decision was reached.
+
 ### Chow
 
 A claim that uses the latest discard to complete a suited sequence, when allowed by the Filipino Mahjongg Ruleset.
@@ -58,6 +62,10 @@ The MVP handling for Flores: the game reveals the Flower tile, logs the event, a
 
 An opponent model that only takes legal actions and makes straightforward draw, discard, claim, and pass choices. It is not expected to play strategically well in the first version.
 
+### Simple Claim AI
+
+The MVP claim behavior for Simple Legal AI: claim the first legal Win Claim, otherwise claim the first legal Pung, and pass on Chow unless a Scripted Tutorial Opening requires it.
+
 ### Scripted Tutorial Opening
 
 A curated early-game sequence used to expose important Filipino Mahjongg concepts, especially claim priority and blocked actions, without requiring a strong AI opponent.
@@ -69,6 +77,10 @@ A scripted teaching mode that creates a contested discard scenario so the player
 ### Full Round
 
 A playable unit that includes dealing, drawing, discarding, legal claims, win detection, and a round end. Scoring may be simplified at first, but the game must log how the result was reached.
+
+### Exhaustive Draw
+
+A Full Round ending where the wall runs out before any player wins. The game ends the round and explains the draw in the activity log.
 
 ### Standard Winning Shape
 
@@ -97,3 +109,11 @@ A legible tile representation that uses text or simple symbols instead of illust
 ### Fresh Round
 
 The MVP session model where each page load or new game starts a new Full Round instead of restoring saved state.
+
+### Disabled Action Reason
+
+A short player-facing explanation attached to an unavailable action, especially when a Claim is blocked by Claim Priority.
+
+### Browser Acceptance Gate
+
+The MVP verification bar requiring real browser evidence that Play Round starts and the Guided Priority Demo blocks lower-priority claims until higher-priority claims pass.
