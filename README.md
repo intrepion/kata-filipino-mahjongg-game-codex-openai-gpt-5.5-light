@@ -41,3 +41,7 @@ MVP 1 is complete when real browser evidence shows:
 - `Across pung` and `Next chow` are disabled while Win Claim priority is unresolved.
 - After passing the Win Claim, Pung becomes available and Chow remains disabled.
 - After passing Pung, Next-Player Chow becomes available.
+
+## Play online
+
+[Play on GitHub Pages](https://intrepion.github.io/kata-filipino-mahjongg-game-codex-openai-gpt-5.5-light/). Return to the [Kata Arcade](https://intrepion.github.io/).
