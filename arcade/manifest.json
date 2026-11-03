@@ -1,6 +1,28 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "gameId": "kata-filipino-mahjongg-game-codex-openai-gpt-5.5-light",
   "playUrl": "https://intrepion.github.io/kata-filipino-mahjongg-game-codex-openai-gpt-5.5-light/",
-  "screenshots": []
+  "screenshots": [
+    {
+      "path": "arcade/screenshots/ci-20261103-01.jpg",
+      "sha256": "02b300c6e350dd184df94a91ddd8fa16ce3b1cd03d2761efb30ea33c96a1dd87",
+      "alt": "Filipino Mahjongg gameplay",
+      "provenance": {
+        "kind": "ci_gameplay_capture",
+        "sourcePath": "arcade/capture-evidence/ci-20261103-01.png",
+        "sourceSha256": "5fc73052198455b3c982d0876244a3c705cf6300e5771da500baae07215907cc",
+        "captureCommit": "6b6c58ec9eea142738f5e0382d6d2e9e1e424bf1",
+        "workflowRunId": "41618864203",
+        "inputHashes": {
+          "game-core.js": "47cfbdff442ab84e61dc42e486f24b83c3f805708a39e50c04bb3c98d43706a6",
+          "game.js": "9749b247b326106f721b76e81d97e3dd923d19cc5eb47ca3008f1961f73834fe",
+          "index.html": "90a4e410c348f2cf9d7c713b481d99ca24b8194e71f0802b19f24a0ba0de2f96",
+          "styles.css": "642991700faf7fd334adaf9b36f28d55d2df307c8046360efb211635043c0f8d"
+        },
+        "publishedFilesVerifiedAt": "2026-11-03T10:25:05Z",
+        "captureRecordPath": "arcade/capture-evidence/ci-20261103-record.json",
+        "captureRecordSha256": "097b7aaa81b1c17f131c221c33d1e6ca0d605578f6e8c45d207c9d298f1e42dd"
+      }
+    }
+  ]
 }
